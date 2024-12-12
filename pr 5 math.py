@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# Параметры
 num_particles = 20
 center = np.array([0.0, 0.0])
 duration = 10 
@@ -12,7 +11,6 @@ angles = np.random.uniform(0, 2 * np.pi, num_particles)
 speeds = np.random.uniform(0.01, max_speed, num_particles)
 velocities = np.array([np.cos(angles) * speeds, np.sin(angles) * speeds]).T
 
-# Инициализация позиций частиц
 positions = np.tile(center, (num_particles, 1))
 
 fig, ax = plt.subplots()
