@@ -5,7 +5,7 @@ from queue import PriorityQueue
 class MazeGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Maze Game v 2")
+        self.root.title("Maze Game v2")
 
         self.cell_size = 40
         self.maze = [
@@ -23,7 +23,7 @@ class MazeGame:
         self.start = (1, 0)
         self.end = (8, 9)
         self.player_x, self.player_y = self.start
-        self.teleport_points = [(6, 8), (4, 4)]
+        self.teleport_points = [(5, 8), (4, 4)]
         self.frozen_turns = 0
 
         self.maze_canvas = tk.Canvas(self.root, width=400, height=400, bg="white")
@@ -32,17 +32,22 @@ class MazeGame:
         self.root.bind("<KeyPress>", self.on_key_press)
         self.draw_maze()
 
+        if not self.check_reachability():
+            print("Конечная точка недостижима!")
+        else:
+            print("Конечная точка достижима!")
+
     def draw_maze(self):
         self.maze_canvas.delete("all")
         for y in range(len(self.maze)):
             for x in range(len(self.maze[y])):
                 color = "black" if self.maze[y][x] == 1 else "white"
                 if self.maze[y][x] == 2:
-                    color = "orange"  # Замедление
+                    color = "orange"  # Slowdown obstacle
                 elif self.maze[y][x] == 3:
-                    color = "red"  # Опасность
+                    color = "red"  # Dangerous obstacle
                 elif self.maze[y][x] == 4:
-                    color = "purple"  # Телепорт 
+                    color = "purple"  # Teleport obstacle
 
                 self.maze_canvas.create_rectangle(
                     x * self.cell_size, y * self.cell_size,
@@ -122,7 +127,13 @@ class MazeGame:
                 next_x, next_y = current[0] + dx, current[1] + dy
                 if 0 <= next_x < len(self.maze[0]) and 0 <= next_y < len(self.maze):
                     if self.maze[next_y][next_x] != 1:
-                        next_cost = cost_so_far[current] + 1
+                        cost = 1
+                        if self.maze[next_y][next_x] == 2: 
+                            cost = 2
+                        elif self.maze[next_y][next_x] == 3:  
+                            continue  
+
+                        next_cost = cost_so_far[current] + cost
                         next_cell = (next_x, next_y)
                         if next_cell not in cost_so_far or next_cost < cost_so_far[next_cell]:
                             cost_so_far[next_cell] = next_cost
@@ -131,6 +142,10 @@ class MazeGame:
                             came_from[next_cell] = current
 
         return came_from
+
+    def check_reachability(self):
+        came_from = self.a_star_search()
+        return self.end in came_from
 
 if __name__ == "__main__":
     root = tk.Tk()
