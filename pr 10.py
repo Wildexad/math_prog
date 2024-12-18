@@ -137,7 +137,7 @@ def display_final_standings(participants):
         )
 
  
-    print("\nRace finished! Final standings:")
+    print("\nГонка окончена! Результаты:")
     for i, participant in enumerate(participants):
         print(f"{i + 1}. {participant['name']} - Laps: {participant['laps']}")
 
